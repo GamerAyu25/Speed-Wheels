@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Space+Grotesk%3Awght%40400%3B500%3B700"
+    />
+    <title>Speed Wheels - Car Catalog</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <script>
+    (function() {
+        emailjs.init("6xpOWXBdBjA5SoLwH");
+    })();
+    </script>
+
+
+
+    <style>
+    /* Hide number input arrows (scroll bar) for all browsers */
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    </style>
+
+
+</head>
+<body>
+    <div class="relative flex size-full min-h-screen flex-col bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900" style='font-family: "Space Grotesk", "Noto Sans", sans-serif;'>
+        <div class="layout-container flex h-full grow flex-col">
+            <!-- Header -->
+            <header class="sticky top-0 z-50 flex items-center justify-between whitespace-nowrap border-b border-solid border-b-slate-700 px-10 py-4 bg-slate-800/50 backdrop-blur-sm">
+                <div class="flex items-center gap-8">
+                    <div class="flex items-center gap-4 text-white">
+                        <div class="size-4">
+                            <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4H17.3334V17.3334H30.6666V30.6666H44V44H4V4Z" fill="currentColor"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-white text-lg font-bold leading-tight tracking-[-0.015em]">Speed Wheels</h2>
+                    </div>
+                    <div class="flex items-center gap-9">
+                        <a class="text-slate-200 text-sm font-medium leading-normal hover:text-blue-400 transition-colors" href="#" onclick="filterCars('Main Lines')">Main Lines</a>
+                        <a class="text-slate-200 text-sm font-medium leading-normal hover:text-blue-400 transition-colors" href="#" onclick="filterCars('Silver Series')">Silver Series</a>
+                        <a class="text-slate-200 text-sm font-medium leading-normal hover:text-blue-400 transition-colors" href="#" onclick="filterCars('Premium Series')">Premium Series</a>
+                        <a class="text-slate-200 text-sm font-medium leading-normal hover:text-blue-400 transition-colors" href="#" onclick="filterCars('Accessories')">Accessories</a>
+                    </div>
+                </div>
+                <div class="flex flex-1 justify-end gap-8">
+                    <label class="flex flex-col min-w-40 !h-10 max-w-64">
+                        <div class="flex w-full flex-1 items-stretch rounded-xl h-full shadow-lg">
+                            <div class="text-slate-400 flex border-none bg-slate-700/80 items-center justify-center pl-4 rounded-l-xl border-r-0">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                    <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+                                </svg>
+                            </div>
+                            <input
+                                id="searchInput"
+                                placeholder="Search cars..."
+                                class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-white focus:outline-0 focus:ring-0 border-none bg-slate-700/80 focus:border-none h-full placeholder:text-slate-400 px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal"
+                                oninput="searchCars()"
+                            />
+                        </div>
+                    </label>
+                    <div class="flex gap-2">
+                        <button
+                            id="cartButton"
+                            class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 bg-slate-700/80 text-white gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5 hover:bg-slate-600 transition-colors shadow-lg"
+                            onclick="toggleCart()"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M222.14,58.87A8,8,0,0,0,216,56H54.68L49.79,29.14A16,16,0,0,0,34.05,16H16a8,8,0,0,0,0,16H34.05l31.1,165.14A16,16,0,0,0,80.89,208H208a8,8,0,0,0,0-16H80.89L77.73,176H196.1a16,16,0,0,0,15.74-13.14L222.14,58.87ZM196.1,160H73.84l-6.22-33.14H204.86ZM104,216a16,16,0,1,1-16-16A16,16,0,0,1,104,216Zm96,0a16,16,0,1,1-16-16A16,16,0,0,1,200,216Z"></path>
+                            </svg>
+                            <span id="cartCount">0</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main class="px-10 py-8">
+                <!-- Hero Section -->
+                <div class="mb-8">
+                    <h1 class="text-white text-4xl font-bold mb-4">Premium Die-Cast Collection</h1>
+                    <p class="text-slate-300 text-lg">Discover our exclusive range of high-quality die-cast model cars</p>
+                </div>
+
+                <!-- Car Grid -->
+                <div id="car-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- Cars will be populated by JavaScript -->
+                </div>
+            </main>
+        </div>
+
+        <!-- Shopping Cart Modal -->
+        <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center backdrop-blur-sm">
+            <div class="bg-slate-800 border border-slate-600 rounded-xl p-6 max-w-md w-full mx-4 max-h-[80vh] overflow-y-auto shadow-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-white text-xl font-bold">Shopping Cart</h3>
+                    <button onclick="toggleCart()" class="text-slate-400 hover:text-white transition-colors">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256">
+                            <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
+                        </svg>
+                    </button>
+                </div>
+                <div id="cartItems" class="space-y-4">
+                    <!-- Cart items will be populated here -->
+                </div>
+                <div class="border-t border-slate-600 pt-4 mt-4">
+                    <div class="flex justify-between items-center text-white font-bold text-lg">
+                        <span>Total: $<span id="cartTotal">0.00</span></span>
+                    </div>
+                    <button 
+                        onclick="openAddressModal()" 
+                        class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-bold transition-colors shadow-lg">
+                        Proceed to Buy
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Car data
+        const cars = [
+            {
+                id: 1,
+                name: "70 Chevy Camaro RS",
+                category: "Main Lines",
+                price: 24.99,
+                image: "Images/Main Lines/70 Chevy Camaro RS.webp",
+                description: "Iconic Italian supercar replica"
+            },
+            {
+                id: 2,
+                name: "71 Dodge Challenge",
+                category: "Main Lines",
+                price: 22.99,
+                image: "Images/Main Lines/71 Dodge Challenge.webp",
+                description: "Classic wedge-shaped design"
+            },
+            {
+                id: 3,
+                name: "71 El Camino",
+                category: "Main Lines",
+                price: 18.99,
+                image: "Images/Main Lines/71 El Camino.webp",
+                description: "German engineering excellence"
+            },
+            {
+                id: 4,
+                name: "87 Audi Quattro",
+                category: "Main Lines",
+                price: 14.99,
+                image: "Images/Main Lines/87 Audi Quattro.webp",
+                description: "American muscle car legend"
+            },
+            {
+                id: 5,
+                name: "90 Honda Civic EF(VTEC)",
+                category: "Main Lines",
+                price: 19.99,
+                image: "Images/Main Lines/90 Honda Civic EF(VTEC).webp",
+                description: "Ultimate driving machine"
+            },
+            {
+                id: 6,
+                name: "95 Mazda RX-7",
+                category: "Main Lines",
+                price: 26.99,
+                image: "Images/Main Lines/95 Mazda RX-7.webp",
+                description: "Modern supercar perfection"
+            },
+            {
+                id: 7,
+                name: "2020 Koenigsegg Jesko",
+                category: "Main Lines",
+                price: 15.99,
+                image: "Images/Main Lines/2020 Koenigsegg Jesko.webp",
+                description: "Bold American design"
+            },
+            {
+                id: 8,
+                name: "Aston Martin DB4GT High-Speed Edition",
+                category: "Main Lines",
+                price: 29.99,
+                image: "Images/Main Lines/Aston Martin DB4GT High-Speed Edition.webp",
+                description: "Hybrid hypercar technology"
+            },
+            {
+                id: 9,
+                name: "BMW 2002",
+                category: "Main Lines",
+                price: 20.99,
+                image: "Images/Main Lines/BMW 2002.webp",
+                description: "Japanese performance icon"
+            },
+            {
+                id: 10,
+                name: "Cadillac Project GTP Hypercar",
+                category: "Main Lines",
+                price: 16.99,
+                image: "Images/Main Lines/Cadillac Project GTP Hypercar.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 11,
+                name: "Ford Escort",               
+                category: "Main Lines",
+                price: 21.99,
+                image: "Images/Main Lines/Ford Escort.webp",
+                description: "American"
+            },
+            {
+                id: 12,
+                name: "Gordon Murray Automotive T.33",
+                category: "Main Lines",
+                price: 16.99,
+                image: "Images/Main Lines/Gordon Murray Automotive T.33.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 13,
+                name: "Dodge Challenger",
+                category: "Premium Series",
+                price: 16.99,
+                image: "Images/Premium Series/64 Prince Skyline GT.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 14,
+                name: "71 Porsche 911",
+                category: "Premium Series",
+                price: 29.99,
+                image: "Images/Premium Series/71 Porsche 911.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 15,
+                name: "72 Toyota Corolla Levin",
+                category: "Premium Series",
+                price: 25.99,
+                image: "Images/Premium Series/72 Toyota Corolla Levin.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 16,
+                name: "73 Honda Civic Custom",
+                category: "Premium Series",
+                price: 45.99,
+                image: "Images/Premium Series/73 Honda Civic Custom.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 17,
+                name: "1987 Toyota Pickup Truck",
+                category: "Premium Series",
+                price: 49.99,
+                image: "Images/Premium Series/1987 Toyota Pickup Truck.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 18,
+                name: "1990 Mercedes Benz190E",
+                category: "Premium Series",
+                price: 49.00,
+                image: "Images/Premium Series/1990 Mercedes Benz190E.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 19,
+                name: "Bugatti Veyron",
+                category: "Premium Series",
+                price: 23.99,
+                image: "Images/Premium Series/Bugatti Veyron.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 20,
+                name: "Mazda 787B",
+                category: "Premium Series",
+                price: 34.99,
+                image: "Images/Premium Series/Mazda 787B.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 21,
+                name: "MG Metro 6R4",
+                category: "Premium Series",
+                price: 75.99,
+                image: "Images/Premium Series/MG Metro 6R4.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 22,
+                name: "Lancia Stratos Zero",
+                category: "Premium Series",
+                price: 43.99,
+                image: "Images/Premium Series/Lancia Stratos Zero.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 23,
+                name: "60s Fiat 500 D Modificada",
+                category: "Silver Series",
+                price: 28.99,
+                image: "Images/Silver Series/60s Fiat 500 D Modificada.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 24,
+                name: "67 Porsche 911R",
+                category: "Silver Series",
+                price: 49.99,
+                image: "Images/Silver Series/67 Porsche 911R.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 25,
+                name: "1971 Nissan Skyline HT 2000 GT",
+                category: "Silver Series",
+                price: 75.99,
+                image: "Images/Silver Series/1971 Nissan Skyline HT 2000 GT.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 26,
+                name: "1992 BMW M3",
+                category: "Silver Series",
+                price: 43.99,
+                image: "Images/Silver Series/1992 BMW M3.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 27,
+                name: "2001 BMW M5",
+                category: "Silver Series",
+                price: 69.99,
+                image: "Images/Silver Series/2001 BMW M5.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 28,
+                name: "2016 BMW M2",
+                category: "Silver Series",
+                price: 46.99,
+                image: "Images/Silver Series/2016 BMW M2.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 29,
+                name: "BMW M1",
+                category: "Silver Series",
+                price: 79.99,
+                image: "Images/Silver Series/BMW M1.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 30,
+                name: "BMW M4",
+                category: "Silver Series",
+                price: 61.99,
+                image: "Images/Silver Series/BMW M4.webp",
+                description: "Retro muscle car revival"
+            }, 
+            {
+                id: 31,
+                name: "FORD GT-40",
+                category: "Silver Series",
+                price: 78.99,
+                image: "Images/Silver Series/FORD GT-40.webp",
+                description: "Retro muscle car revival"
+            },
+            {
+                id: 32,
+                name: "Jaguar Lightweight E-Type",
+                category: "Silver Series",
+                price: 35.99,
+                image: "Images/Silver Series/Jaguar Lightweight E-Type.jpg",
+                description: "Retro muscle car revival"
+            },            
+        ];
+
+        //  data
+        const Accessories = [
+            {
+                id: 101,
+                name: "1 Cars Display",
+                category: "Accessories",
+                price: 16.99,
+                image: "Images/Accessories/1 Cars Display.webp",
+                description: "Retro muscle car revival"
+            },                
+            {
+                id: 102,
+                name: "5 Cars Display",
+                category: "Accessories",
+                price: 20.99,
+                image: "Images/Accessories/5 Cars Display.webp",
+                description: "Retro muscle car revival"
+            },                
+            {
+                id: 103,
+                name: "8 Cars Display",
+                category: "Accessories",
+                price: 28.99,
+                image: "Images/Accessories/8 Cars Display.webp",
+                description: "Retro muscle car revival"
+            },                
+            {
+                id: 104,
+                name: "Protector Case",
+                category: "Accessories",
+                price: 9.99,
+                image: "Images/Accessories/Protector Case.webp",
+                description: "Retro muscle car revival"
+            },                
+
+        ];
+
+        let cart = [];
+        let currentFilter = 'all';
+
+        // Initialize the page
+        function init() {
+            // Merge Accessories into the main cars array
+            cars.push(...Accessories);
+
+            displayCars(cars);
+            updateCartDisplay();
+        }
+
+        // Display cars in the grid
+        function displayCars(carsToShow) {
+            const container = document.getElementById('car-container');
+            container.innerHTML = '';
+
+            carsToShow.forEach(car => {
+                const carCard = document.createElement('div');
+                carCard.className = 'bg-slate-800/60 backdrop-blur-sm rounded-xl p-6 hover:bg-slate-700/80 transition-all duration-300 car-card shadow-lg hover:shadow-xl border border-slate-700/50';
+                carCard.setAttribute('data-category', car.category);
+                
+                carCard.innerHTML = `
+                    <div class="mb-4 rounded-lg overflow-hidden">
+                        <img src="${car.image}" alt="${car.name}" class="w-full h-48 object-cover rounded-lg">
+                    </div>
+                    <h3 class="text-white text-lg font-bold mb-2">${car.name}</h3>
+                    <p class="text-slate-300 text-sm mb-4">${car.description}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-blue-400 text-xl font-bold">$${car.price}</span>
+                        <button 
+                            onclick="addToCart(${car.id})"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200 shadow-md hover:shadow-lg"
+                        >
+                            Add to Cart
+                        </button>
+                    </div>
+                `;
+
+                
+                container.appendChild(carCard);
+            });
+        }
+
+        // Filter cars by category
+        function filterCars(category) {
+            currentFilter = category;
+            
+            // Update filter button styles
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-blue-600');
+                btn.classList.add('bg-slate-700/80');
+            });
+            
+            event.target.classList.add('active', 'bg-blue-600');
+            event.target.classList.remove('bg-slate-700/80');
+
+            // Filter and display cars
+            let filteredCars = cars;
+            if (category !== 'all') {
+                filteredCars = cars.filter(car => car.category === category);
+            }
+            
+            displayCars(filteredCars);
+        }
+
+        // Search cars
+        function searchCars() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            let filteredCars = cars;
+            
+            if (currentFilter !== 'all') {
+                filteredCars = cars.filter(car => car.category === currentFilter);
+            }
+            
+            if (searchTerm) {
+                filteredCars = filteredCars.filter(car => 
+                    car.name.toLowerCase().includes(searchTerm) ||
+                    car.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            displayCars(filteredCars);
+        }
+
+        // Add item to cart
+function addToCart(carId) {
+    const allItems = cars; // Already contains both cars and accessories
+    const item = allItems.find(c => c.id === carId && c.category); // Also check category to ensure correct match
+
+    if (!item) return;
+
+    const existingItem = cart.find(c => c.id === carId && c.category === item.category);
+
+    if (existingItem) {
+        existingItem.quantity += 1;
+    } else {
+        cart.push({ ...item, quantity: 1 });
+    }
+
+    updateCartDisplay();
+
+    // Show brief feedback
+    const button = event.target;
+    const originalText = button.textContent;
+    button.textContent = 'Added!';
+    button.classList.add('bg-green-600');
+    button.classList.remove('bg-blue-600');
+
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.classList.remove('bg-green-600');
+        button.classList.add('bg-blue-600');
+    }, 1000);
+}
+
+
+        // Update cart display
+        function updateCartDisplay() {
+            const cartCount = document.getElementById('cartCount');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            cartCount.textContent = totalItems;
+            
+            updateCartModal();
+        }
+
+        // Update cart modal content
+        function updateCartModal() {
+            const cartItems = document.getElementById('cartItems');
+            const cartTotal = document.getElementById('cartTotal');
+            
+            if (cart.length === 0) {
+                cartItems.innerHTML = '<p class="text-slate-400 text-center py-8">Your cart is empty</p>';
+                cartTotal.textContent = '0.00';
+                return;
+            }
+            
+            cartItems.innerHTML = '';
+            let total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'flex items-center justify-between bg-slate-700/60 p-4 rounded-lg border border-slate-600/50';
+                cartItem.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${item.image}" alt="${item.name}" class="w-16 h-12 object-cover rounded-md">
+                        <div>
+                            <h4 class="text-white font-medium">${item.name}</h4>
+                            <p class="text-slate-300 text-sm">$${item.price} each</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-2">
+                            <button onclick="updateQuantity(${item.id}, -1)" class="bg-slate-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-500 transition-colors">-</button>
+                            <span class="text-white font-medium w-8 text-center">${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)" class="bg-slate-600 text-white w-8 h-8 rounded-full flex items-center justify-center hover:bg-slate-500 transition-colors">+</button>
+                        </div>
+                        <span class="text-blue-400 font-bold">$${itemTotal.toFixed(2)}</span>
+                    </div>
+                `;
+                cartItems.appendChild(cartItem);
+            });
+            
+            cartTotal.textContent = total.toFixed(2);
+        }
+
+        // Update item quantity in cart
+        function updateQuantity(carId, change) {
+            const item = cart.find(item => item.id === carId);
+            if (item) {
+                item.quantity += change;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(item => item.id !== carId);
+                }
+                updateCartDisplay();
+            }
+        }
+
+        // Toggle cart modal
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            modal.classList.toggle('hidden');
+            modal.classList.toggle('flex');
+        }
+
+        // Close cart when clicking outside
+        document.getElementById('cartModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                toggleCart();
+            }
+        });
+
+        // Initialize the page when loaded
+        init();
+        // new
+
+
+
+
+
+        //new helper 
+function confirmOrder() {
+    const firstName = document.getElementById('firstName').value.trim();
+    const lastName = document.getElementById('lastName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const state = document.getElementById('state').value.trim();
+    const pinCode = document.getElementById('pinCode').value.trim();
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+
+    if (!firstName || !lastName || !email || !city || !state || !pinCode || !paymentMethod) {
+        alert("Please fill out all delivery and payment details.");
+        return;
+    }
+
+    if (!email.includes('@gmail.com')) {
+        alert("Please enter a valid Gmail address.");
+        return;
+    }
+
+    const fullAddress = `${city}, ${state} - ${pinCode}`;
+    const orderDate = new Date();
+    const deliveryDate = new Date(orderDate.getTime() + 5 * 24 * 60 * 60 * 1000); // +5 days
+
+    const orderData = {
+        name: `${firstName} ${lastName}`,
+        email,
+        address: fullAddress,
+        orderDate: orderDate.toISOString(),
+        deliveryDate: deliveryDate.toISOString(),
+        paymentMethod,
+        items: cart
+    };
+
+    let total = 0;
+    const itemDetails = cart.map(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        return `${item.name} - Qty: ${item.quantity} - $${itemTotal.toFixed(2)}`;
+    }).join('\n');
+
+    const message = `
+Name: ${firstName} ${lastName}
+Email: ${email}
+Address: ${fullAddress}
+Order Date: ${orderDate.toLocaleDateString()}
+Expected Delivery: ${deliveryDate.toLocaleDateString()}
+Payment Method: ${paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}
+
+Order Summary:
+${itemDetails}
+
+Total Amount: $${total.toFixed(2)}
+    `;
+
+    // ✅ EmailJS sending
+    emailjs.send("service_ayush25", "template_ayush25", {
+        to_name: `${firstName} ${lastName}`,
+        to_email: 'ayushpadwal25@gmail.com',
+        message: message
+    }, "6xpOWXBdBjA5SoLwH")
+    .then(function(response) {
+        console.log("✅ Email sent:", response.status, response.text);
+
+        alert(`Thank you, ${firstName}! Your order has been placed successfully.`);
+
+        // Store in localStorage for the bill page
+        localStorage.setItem('orderData', JSON.stringify(orderData));
+
+        // Clear cart and close modals
+        cart = [];
+        updateCartDisplay();
+        toggleAddressModal();
+        toggleCart();
+
+        // Redirect to bill page
+        window.location.href = 'bill.html';
+    })
+    .catch(function(error) {
+        console.error("❌ Email sending failed:", error);
+        alert("Email could not be sent.\n\n" + JSON.stringify(error, null, 2));
+    });
+
+}
+
+
+
+
+    // Store in localStorage
+    localStorage.setItem('orderData', JSON.stringify(orderData));
+
+    // Clear cart and close modals
+    cart = [];
+    updateCartDisplay();
+    toggleAddressModal();
+    toggleCart();
+
+    // Redirect to bill page
+    window.location.href = 'bill.html';
+
+
+
+
+    // Simulate order confirmation
+    alert(`Thank you, ${firstName}! Your order has been placed successfully using ${paymentMethod === 'cod' ? 'Cash on Delivery' : 'Online Payment'}.`);
+
+    // Reset cart and modal
+    cart = [];
+    updateCartDisplay();
+    toggleAddressModal();
+    toggleCart();
+
+
+
+        function openAddressModal() {
+            populateOrderSummary();
+            document.getElementById('addressModal').classList.remove('hidden');
+            document.getElementById('addressModal').classList.add('flex');
+        }
+
+        function toggleAddressModal() {
+            document.getElementById('addressModal').classList.add('hidden');
+            document.getElementById('addressModal').classList.remove('flex');
+        }
+
+        // Show products inside address modal
+        function populateOrderSummary() {
+            const container = document.getElementById('orderSummary');
+            container.innerHTML = '';
+            let total = 0;
+
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+
+                const row = document.createElement('div');
+                row.className = 'flex items-center justify-between bg-slate-700/50 p-3 rounded-lg';
+
+                row.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <img src="${item.image}" alt="${item.name}" class="w-14 h-12 object-cover rounded-md">
+                        <div>
+                            <p class="text-white font-medium">${item.name}</p>
+                            <p class="text-slate-300 text-sm">Qty: ${item.quantity}</p>
+                        </div>
+                    </div>
+                    <span class="text-blue-400 font-bold">$${itemTotal.toFixed(2)}</span>
+                `;
+                container.appendChild(row);
+            });
+
+            document.getElementById('orderTotal').textContent = total.toFixed(2);
+        }
+
+
+
+
+    </script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'967c83b1a25c4844',t:'MTc1Mzk1ODgxMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+        <!-- Address Confirmation Modal -->
+        <div id="addressModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center backdrop-blur-sm">
+        <div class="bg-slate-800 border border-slate-600 rounded-xl p-6 max-w-2xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+            <h3 class="text-white text-xl font-bold">Confirm Delivery Details</h3>
+            <button onclick="toggleAddressModal()" class="text-slate-400 hover:text-white transition-colors text-2xl leading-none">×</button>
+            </div>
+
+            <!-- User Details Form -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+                <label class="text-slate-300 block mb-1">First Name</label>
+                <input id="firstName" class="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600" type="text" placeholder="First Name" />
+            </div>
+            <div>
+                <label class="text-slate-300 block mb-1">Last Name</label>
+                <input id="lastName" class="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600" type="text" placeholder="Last Name" />
+            </div>
+            <div>
+                <label class="text-slate-300 block mb-1">Email</label>
+                <input id="email" class="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600" type="email" placeholder="Email" />
+            </div>
+            <div>
+                <label class="text-slate-300 block mb-1">City</label>
+                <select id="city" class="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600">
+                    <option value="">-- Select City --</option>
+                    <option value="Mumbai">Mumbai</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Bengaluru">Bengaluru</option>
+                    <option value="Hyderabad">Hyderabad</option>
+                    <option value="Pune">Pune</option>
+                    <option value="Chennai">Chennai</option>
+                    <option value="Kolkata">Kolkata</option>
+                    <option value="Ahmedabad">Ahmedabad</option>
+                    <option value="Jaipur">Jaipur</option>
+                    <option value="Surat">Surat</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-slate-300 block mb-1">State</label>
+                <select id="state" class="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600">
+                    <option value="">-- Select State --</option>
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                    <option value="Assam">Assam</option>
+                    <option value="Bihar">Bihar</option>
+                    <option value="Chhattisgarh">Chhattisgarh</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Haryana">Haryana</option>
+                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                    <option value="Jharkhand">Jharkhand</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Kerala">Kerala</option>
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Manipur">Manipur</option>
+                    <option value="Meghalaya">Meghalaya</option>
+                    <option value="Mizoram">Mizoram</option>
+                    <option value="Nagaland">Nagaland</option>
+                    <option value="Odisha">Odisha</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Sikkim">Sikkim</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Telangana">Telangana</option>
+                    <option value="Tripura">Tripura</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    <option value="Uttarakhand">Uttarakhand</option>
+                    <option value="West Bengal">West Bengal</option>
+                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                    <option value="Chandigarh">Chandigarh</option>
+                    <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                    <option value="Ladakh">Ladakh</option>
+                    <option value="Lakshadweep">Lakshadweep</option>
+                    <option value="Puducherry">Puducherry</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-slate-300 block mb-1">Pin Code</label>
+                <input id="pinCode" class="w-full p-3 rounded-lg bg-slate-700 text-white border border-slate-600" type="number" placeholder="Pin Code" />
+            </div>
+            </div>
+
+            <!-- Product Summary -->
+            <div class="mb-4">
+            <h4 class="text-white text-lg font-semibold mb-2">Order Summary</h4>
+            <div id="orderSummary" class="space-y-4"></div>
+            <div class="border-t border-slate-600 mt-4 pt-3 text-right">
+                <span class="text-white font-bold text-lg">Total: $<span id="orderTotal">0.00</span></span>
+            </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="flex justify-end gap-2 mt-4">
+            <button onclick="toggleAddressModal()" class="px-4 py-2 rounded-lg bg-slate-600 text-white hover:bg-slate-500">Cancel</button>
+            <button onclick="confirmOrder()" class="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-bold">Confirm Order</button>
+            </div>
+            <!-- Payment Options -->
+            <div class="mb-4">
+            <h4 class="text-white text-lg font-semibold mb-2">Payment Method</h4>
+            <div class="flex flex-col gap-2 text-white">
+                <label class="flex items-center gap-2">
+                <input type="radio" name="paymentMethod" value="cod" class="accent-blue-600" checked />
+                Cash on Delivery (COD)
+                </label>
+                <label class="flex items-center gap-2">
+                <input type="radio" name="paymentMethod" value="online" class="accent-blue-600" />
+                Pay Online (UPI / Net Banking)
+                </label>
+            </div>
+            </div>
+
+        <!-- Order Bill Modal -->
+        <div id="billModal" class="fixed inset-0 bg-black bg-opacity-60 z-50 hidden items-center justify-center backdrop-blur-sm">
+        <div class="bg-white text-black rounded-xl p-6 max-w-3xl w-full mx-4 shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">Order Invoice</h3>
+            <button onclick="toggleBillModal()" class="text-black hover:text-red-600 text-xl font-bold">×</button>
+            </div>
+
+            <div id="billContent" class="space-y-4">
+            <!-- Bill content will be added here dynamically -->
+            </div>
+
+            <div class="text-right mt-6">
+            <button onclick="printBill()" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-bold shadow">Download / Print</button>
+            </div>
+        </div>
+        </div>
+
+
+
+
+
+        </div>
+        </div>
+
+
+
+</body>
+</html>
